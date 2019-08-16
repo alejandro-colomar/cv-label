@@ -1,0 +1,5 @@
+ Usage:  $ vision-artificial	[--help] [--license] [--usage] [--version]
+				[--file=FILE] [--iface=IFACE]
+
+
+ Type '$ vision-artificial --help' for a full description.

@@ -1,0 +1,25 @@
+Usage: $ vision-artificial [OPTION...]
+
+	-f, --file=FILE			set image file
+	-i, --iface=IFACE		set program interface
+
+ Other:
+	-L, --license			display license
+	-h, --help			give this help list
+	-u, --usage			give a short usage message
+	-v, --version			print program version
+
+MANDATORY or [OPTIONAL] arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+
+ Examples:
+	$ vision-artificial
+	$ vision-artificial --version
+	$ vision-artificial --license
+	$ vision-artificial -i 1
+	$ vision-artificial -f <file>
+
+
+Report bugs to: 1903716@gmail.com
+vision-artificial home page: <https://github.com/AlejandroColomar/vision-artificial/>

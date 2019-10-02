@@ -41,26 +41,17 @@ PHONY := all
 all: $(OBJ)
 
 
+%.s:
+	@echo	"	CC	label/tmp/$@"
+	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
+%.o: %.s
+	@echo	"	AS	label/tmp/$@"
+	$(Q)$(AS) $< -o $@
+
+
 label.s: $(LABEL_SRC) $(LABEL_INC)
-	@echo	"	CC	label/tmp/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-label.o: label.s
-	@echo	"	AS	label/tmp/$@"
-	$(Q)$(AS) $< -o $@
-
 main.s: $(MAIN_SRC) $(MAIN_INC)
-	@echo	"	CC	label/tmp/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-main.o: main.s
-	@echo	"	AS	label/tmp/$@"
-	$(Q)$(AS) $< -o $@
-
 parse.s: $(PARSE_SRC) $(PARSE_INC)
-	@echo	"	CC	label/tmp/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-parse.o: parse.s
-	@echo	"	AS	label/tmp/$@"
-	$(Q)$(AS) $< -o $@
 
 
 PHONY += clean

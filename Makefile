@@ -197,8 +197,8 @@ install: uninstall
 	$(Q)cp -v		$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
 	@echo	"	MKDIR	$(DESTDIR)/$(INSTALL_SHARE_DIR)/label/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/label/
-	@echo	"	CP -r	share/coins/*"
-	$(Q)cp -r -v		./share/coins/*	$(DESTDIR)/$(INSTALL_SHARE_DIR)/label/
+	@echo	"	CP -r	share/label/*"
+	$(Q)cp -r -v		./share/label/*	$(DESTDIR)/$(INSTALL_SHARE_DIR)/label/
 	@echo	"	Done"
 	@echo
 
@@ -224,11 +224,9 @@ PHONY += help
 help:
 	@echo  'Cleaning targets:'
 	@echo  '  clean		  - Remove all generated files'
-	@echo  '  distclean	  - Remove all generated files (including libraries)'
 	@echo
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
-	@echo  '* libalx	  - Build the libalx library'
 	@echo  '* tmp		  - Compile all files'
 	@echo  '* bin		  - Build the binary'
 	@echo  '  install	  - Install the program into the filesystem'

@@ -202,6 +202,7 @@ int	find_label	(const img_s *restrict img,
 	conts_s		*conts;
 	const cont_s	*cont;
 	int		status;
+	ptrdiff_t	nconts;
 
 	status	= -1;
 
@@ -227,9 +228,8 @@ int	find_label	(const img_s *restrict img,
 		goto err;
 	if (alx_cv_contours(img_tmp, conts))
 		goto err;
-	if (alx_cv_contours_size(conts) != 1)
-		goto err;
-	if (alx_cv_contours_contour(&cont, conts, 0))
+	alx_cv_extract_conts(conts, &cont, &nconts);
+	if (nconts != 1)
 		goto err;
 	alx_cv_min_area_rect(rect_rot, cont);
 
@@ -278,7 +278,7 @@ int	find_cerdo	(const img_s *restrict img,
 
 	alx_cv_clone(img_tmp, img);
 	alx_cv_extract_rect_rot(rect_rot, &rectrot_ctr_x, &rectrot_ctr_y,
-					&rectrot_w, &rectrot_h);
+					&rectrot_w, &rectrot_h, NULL);
 	lbl_x	= rectrot_ctr_x - (1.05 * rectrot_w / 2);
 	lbl_y	= rectrot_ctr_y - (1.47 * rectrot_h / 2);
 	lbl_w	= rectrot_w / 2;
@@ -296,7 +296,7 @@ int	find_cerdo	(const img_s *restrict img,
 		goto err;
 	alx_cv_extract_imgdata(img_tmp, &imgdata, NULL, NULL,
 					&imgdata_w, &imgdata_h,
-					&B_per_pix, &B_per_line);
+					&B_per_pix, &B_per_line, NULL);
 	if (alx_ocr_read(ARRAY_SIZE(text), text, imgdata, imgdata_w, imgdata_h,
 					B_per_pix, B_per_line,
 					ALX_OCR_LANG_SPA, ALX_OCR_CONF_NONE))
@@ -333,7 +333,7 @@ int	read_barcode	(const img_s *restrict img,
 
 	alx_cv_clone(img_tmp, img);
 	alx_cv_extract_imgdata(img_tmp, &imgdata, &rows, &cols, NULL, NULL,
-								NULL, NULL);
+							NULL, NULL, NULL);
 	if (alx_zbar_read(BUFSIZ, bcode, NULL, imgdata, rows, cols, ZBAR_EAN13))
 		goto err;
 
@@ -369,7 +369,7 @@ int	read_price	(const img_s *restrict img,
 
 	alx_cv_clone(img_tmp, img);
 	alx_cv_extract_rect_rot(rect_rot, &rectrot_ctr_x, &rectrot_ctr_y,
-					&rectrot_w, &rectrot_h);
+					&rectrot_w, &rectrot_h, NULL);
 	prc_x	= rectrot_ctr_x - (0.33 * rectrot_w / 2);
 	prc_y	= rectrot_ctr_y - (0.64 * rectrot_h / 2);
 	prc_w	= rectrot_w * 0.225;
@@ -391,7 +391,7 @@ int	read_price	(const img_s *restrict img,
 		goto err;
 	alx_cv_extract_imgdata(img_tmp, &imgdata, NULL, NULL,
 					&imgdata_w, &imgdata_h,
-					&B_per_pix, &B_per_line);
+					&B_per_pix, &B_per_line, NULL);
 	if (alx_ocr_read(BUFSIZ, price, imgdata, imgdata_w, imgdata_h,
 					B_per_pix, B_per_line,
 					ALX_OCR_LANG_DIGITS,

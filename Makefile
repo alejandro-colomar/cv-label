@@ -126,6 +126,7 @@ CFLAGS_W       += -Wstrict-prototypes
 CFLAGS_W       += -Werror
 
 CFLAGS_PKG	= `pkg-config --cflags opencv`
+CFLAGS_PKG     += `pkg-config --cflags opencv4`
 CFLAGS_PKG     += `pkg-config --cflags libalx-cv`
 CFLAGS_PKG     += `pkg-config --cflags libalx-ocr`
 CFLAGS_PKG     += `pkg-config --cflags libalx-zbar`

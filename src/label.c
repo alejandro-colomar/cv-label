@@ -14,9 +14,9 @@
 #include <stdio.h>
 #include <time.h>
 
-#include <opencv2/imgproc/types_c.h>
 #include <zbar.h>
 
+#define ALX_NO_PREFIX
 #include <libalx/base/compiler/size.h>
 #include <libalx/base/errno/error.h>
 #include <libalx/base/stdio/printf/sbprintf.h>
@@ -222,7 +222,7 @@ int	find_label	(const img_s *restrict img,
 	alx_cv_invert(img_tmp);
 	if (alx_cv_smooth(img_tmp, ALX_CV_SMOOTH_MEAN, 21))
 		goto err;
-	if (alx_cv_threshold(img_tmp, CV_THRESH_BINARY_INV, 2))
+	if (alx_cv_threshold(img_tmp, ALX_CV_THRESH_BINARY_INV, 2))
 		goto err;
 	if (alx_cv_dilate_erode(img_tmp, 100))
 		goto err;
@@ -290,7 +290,7 @@ int	find_cerdo	(const img_s *restrict img,
 	if (alx_cv_init_rect(rect, lbl_x, lbl_y, lbl_w, lbl_h))
 		goto err;
 	alx_cv_roi_set(img_tmp, rect);
-	if (alx_cv_threshold(img_tmp, CV_THRESH_BINARY, ALX_CV_THR_OTSU))
+	if (alx_cv_threshold(img_tmp, ALX_CV_THRESH_BINARY, ALX_CV_THR_OTSU))
 		goto err;
 	if (alx_cv_erode(img_tmp, 1))
 		goto err;
@@ -383,11 +383,11 @@ int	read_price	(const img_s *restrict img,
 	alx_cv_roi_set(img_tmp, rect);
 	if (alx_cv_smooth(img_tmp, ALX_CV_SMOOTH_MEAN, 3))
 		goto err;
-	if (alx_cv_threshold(img_tmp, CV_THRESH_BINARY, ALX_CV_THR_OTSU))
+	if (alx_cv_threshold(img_tmp, ALX_CV_THRESH_BINARY, ALX_CV_THR_OTSU))
 		goto err;
 	if (alx_cv_dilate_erode(img_tmp, 1))
 		goto err;
-	if (alx_cv_threshold(img_tmp, CV_THRESH_BINARY, 1))
+	if (alx_cv_threshold(img_tmp, ALX_CV_THRESH_BINARY, 1))
 		goto err;
 	alx_cv_extract_imgdata(img_tmp, &imgdata, NULL, NULL,
 					&imgdata_w, &imgdata_h,
@@ -424,13 +424,11 @@ int	chk_bcode_price	(const char bcode[static restrict BUFSIZ],
 	char	bcode_price[BUFSIZ];
 
 	if (bcode[8] != '0') {
-		if (alx_sbprintf(bcode_price, NULL, "%c%c.%c%c",
-							bcode[8], bcode[9],
+		if (sbprintf(bcode_price, NULL, "%c%c.%c%c", bcode[8], bcode[9],
 							bcode[10], bcode[11]))
 			return	-1;
 	} else {
-		if (alx_sbprintf(bcode_price, NULL, "%c.%c%c",
-							bcode[9],
+		if (sbprintf(bcode_price, NULL, "%c.%c%c", bcode[9],
 							bcode[10], bcode[11]))
 			return	-1;
 	}

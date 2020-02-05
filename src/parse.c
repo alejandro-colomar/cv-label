@@ -17,6 +17,7 @@
 #include <getopt.h>
 #include <sys/stat.h>
 
+#define ALX_NO_PREFIX
 #include <libalx/base/errno/error.h>
 #include <libalx/base/stdio/printf/snprintfs.h>
 
@@ -123,9 +124,9 @@ void	parse_file	(char fname[static restrict FILENAME_MAX], char *arg)
 	struct stat	sb;
 
 	if (stat(arg, &sb)  ||  !S_ISREG(sb.st_mode))
-		alx_error(EXIT_FAILURE, arg);
-	if (alx_snprintfs(fname, NULL, FILENAME_MAX, "%s", arg))
-		alx_error(EXIT_FAILURE, arg);
+		errorx(EXIT_FAILURE, arg);
+	if (snprintfs(fname, NULL, FILENAME_MAX, "%s", arg))
+		errorx(EXIT_FAILURE, arg);
 	return;
 }
 

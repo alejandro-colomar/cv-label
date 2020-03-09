@@ -21,10 +21,19 @@
 #include <libalx/base/errno/error.h>
 #include <libalx/base/stdio/printf/sbprintf.h>
 #include <libalx/base/stdlib/maximum.h>
-#include <libalx/extra/cv/alx.h>
-#include <libalx/extra/cv/core.h>
-#include <libalx/extra/cv/highgui.h>
-#include <libalx/extra/cv/imgproc.h>
+//#include <libalx/extra/cv/alx.h>
+#include <libalx/extra/cv/core/array.h>
+#include <libalx/extra/cv/core/contours.h>
+#include <libalx/extra/cv/core/img.h>
+#include <libalx/extra/cv/core/rect.h>
+#include <libalx/extra/cv/core/roi.h>
+#include <libalx/extra/cv/highgui/file.h>
+#include <libalx/extra/cv/imgproc/filter/filter.h>
+#include <libalx/extra/cv/imgproc/geometric/geom.h>
+#include <libalx/extra/cv/imgproc/miscellaneous/misc.h>
+#include <libalx/extra/cv/imgproc/shape/contours.h>
+#include <libalx/extra/cv/imgproc/shape/rect.h>
+#include <libalx/extra/cv/types.h>
 #include <libalx/extra/ocr/ocr.h>
 #include <libalx/extra/zbar/zbar.h>
 
@@ -156,7 +165,7 @@ int	proc_label_steps(const char *restrict fname)
 		fprintf(stderr, "Label not found");
 		goto err;
 	}
-	if (alx_cv_component(img, ALX_CV_CMP_GREEN)) {
+	if (alx_cv_component(img, ALX_CV_CMP_BGR_G)) {
 		fprintf(stderr, "Couldn't extract green component");
 		goto err;
 	}
@@ -215,7 +224,7 @@ int	find_label	(const img_s *restrict img,
 	alx_cv_init_conts(conts);
 
 	alx_cv_clone(img_tmp, img);
-	if (alx_cv_component(img_tmp, ALX_CV_CMP_BLUE))
+	if (alx_cv_component(img_tmp, ALX_CV_CMP_BGR_B))
 		goto err;
 	if (alx_cv_smooth(img_tmp, ALX_CV_SMOOTH_MEDIAN, 7))
 		goto err;
@@ -228,7 +237,8 @@ int	find_label	(const img_s *restrict img,
 		goto err;
 	if (alx_cv_contours(img_tmp, conts))
 		goto err;
-	alx_cv_extract_conts(conts, &cont, &nconts);
+	if (alx_cv_extract_conts(conts, &cont, &nconts))
+		goto err;
 	if (nconts != 1)
 		goto err;
 	alx_cv_min_area_rect(rect_rot, cont);
@@ -294,8 +304,7 @@ int	find_cerdo	(const img_s *restrict img,
 		goto err;
 	if (alx_cv_erode(img_tmp, 1))
 		goto err;
-	alx_cv_extract_imgdata(img_tmp, &imgdata, NULL, NULL,
-					&imgdata_w, &imgdata_h,
+	alx_cv_extract_imgdata(img_tmp, &imgdata, &imgdata_w, &imgdata_h,
 					&B_per_pix, &B_per_line, NULL);
 	if (alx_ocr_read(ARRAY_SIZE(text), text, imgdata, imgdata_w, imgdata_h,
 					B_per_pix, B_per_line,
@@ -321,7 +330,7 @@ int	read_barcode	(const img_s *restrict img,
 {
 	img_s		*img_tmp;
 	void		*imgdata;
-	ptrdiff_t	rows, cols;
+	ptrdiff_t	w, h;
 	int		status;
 
 	status	= -1;
@@ -332,9 +341,8 @@ int	read_barcode	(const img_s *restrict img,
 		goto out_free_tmp;
 
 	alx_cv_clone(img_tmp, img);
-	alx_cv_extract_imgdata(img_tmp, &imgdata, &rows, &cols, NULL, NULL,
-							NULL, NULL, NULL);
-	if (alx_zbar_read(BUFSIZ, bcode, NULL, imgdata, rows, cols, ZBAR_EAN13))
+	alx_cv_extract_imgdata(img_tmp, &imgdata, &w, &h, NULL, NULL, NULL);
+	if (alx_zbar_read(BUFSIZ, bcode, NULL, imgdata, h, w, ZBAR_EAN13))
 		goto err;
 
 	status	= 0;
@@ -389,8 +397,7 @@ int	read_price	(const img_s *restrict img,
 		goto err;
 	if (alx_cv_threshold(img_tmp, ALX_CV_THRESH_BINARY, 1))
 		goto err;
-	alx_cv_extract_imgdata(img_tmp, &imgdata, NULL, NULL,
-					&imgdata_w, &imgdata_h,
+	alx_cv_extract_imgdata(img_tmp, &imgdata, &imgdata_w, &imgdata_h,
 					&B_per_pix, &B_per_line, NULL);
 	if (alx_ocr_read(BUFSIZ, price, imgdata, imgdata_w, imgdata_h,
 					B_per_pix, B_per_line,
